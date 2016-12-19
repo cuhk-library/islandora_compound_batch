@@ -22,11 +22,11 @@ function islandora_compound_batch_drush_command() {
         'description' => 'Either "directory" or "zip".',
         'required' => TRUE,
       ),*/
-      'target' => array(
+      //'target' => array(
         /*'description' => 'The target to directory or zip file to scan.',*/
-        'description' => 'The target to directory to scan.',
-        'required' => TRUE,
-      ),
+       // 'description' => 'The target to directory to scan.',
+       // 'required' => TRUE,
+      //),
       'namespace' => array(
         'description' => 'The namespace for objects created by this command.  Defaults to namespace set in Fedora config.',
         'required' => FALSE,
@@ -60,7 +60,22 @@ function islandora_compound_batch_drush_command() {
     'description' => 'Removes rows from the islandora_compound_batch table that no longer have a batch associated with them.',
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
   );
-
+  // XXX: The target parameter became reserved in Drush 7 and above, for
+  // backwards compatibility both will be supported. Not using
+  // strict-option-handling (http://www.drush.org/en/master/strict-options) as
+  // it requires manual argument parsing.
+  if (DRUSH_VERSION >= 7) {
+    $items['islandora_compound_batch_preprocess']['options']['scan_target'] = array(
+      'description' => 'The target to directory or zip file to scan.',
+      'required' => TRUE,
+    );
+  }
+  else {
+    $items['islandora_compound_batch_preprocess']['options']['target'] = array(
+      'description' => 'The target to directory or zip file to scan.',
+      'required' => TRUE,
+    );
+  }
   return $items;
 }
 
@@ -77,7 +92,7 @@ function drush_islandora_compound_batch_preprocess() {
   $parameters = array(
     'type' => drush_get_option('type'),
     'namespace' => drush_get_option('namespace'),
-    'target' => drush_get_option('target'),
+    'target' => DRUSH_VERSION >= 7 ? drush_get_option('scan_target') : drush_get_option('target'),
     'parent' => drush_get_option('parent', 'islandora:compoundCollection'),
     'content_models' => drush_get_option('content_models'),
     'icbp_verbose' => drush_get_option('icbp_verbose'),
