@@ -86,6 +86,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     $object_xpath = $compound_batch_row['object_xpath'];
     // Parent objects will return NULL from inferPerent method.
     if (!is_null($parent_pid)) {
+      $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
       $sequence_number = $this->seqNumBasedOnXpath($object_xpath);
       $this->addRelationshipsForChild($parent_pid, $sequence_number);
 
