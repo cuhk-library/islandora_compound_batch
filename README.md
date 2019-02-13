@@ -29,6 +29,8 @@ The ingest is a four-step process:
 
 Step 2, generating structure files, is accomplished by running a standalone PHP script on the directory containing your objects. The last two are drush commands similar to those provided by other Islandora Batch modules. Details on each step are provided below.
 
+Note that the predicate in child objects' RELS-EXT datastream that relates them to their parent is the one that is defined in the Compound Solution Pack's "Child relationship predicate" admin setting. By default this is `isConstituentOf`.
+
 ## Requirements
 
 This module requires the following modules/libraries:
@@ -70,6 +72,29 @@ input_directory
     └── MODS.xml
 ```
 The names of the parent and child directories don't matter, but the names of the files within them do, as explained below.
+
+This module will ingest objects that do not have the 'islandora:compoundCmodel' content model if a file named `OBJ` is in the parent's directory. The content model assigned to the parent object is determined by the extension of the OBJ file. For example, if `OBJ.pdf` is present in the `parent_one` directory, that object will be assigned the 'islandora:sp_pdf' content model and will have the `OBJ.pdf` file as its OBJ datastream, and will also have `first_child` and `second_child` as children:
+
+```
+input_directory
+├── parent_one
+│   ├── first_child
+│   │   ├── MODS.xml
+│   │   └── OBJ.jp2
+│   ├── second_child
+│   │   ├── MODS.xml
+│   │   └── OBJ.jp2
+│   └── OBJ.pdf 
+│   └── MODS.xml
+└── parent_two
+    ├── first_child
+    │   ├── MODS.xml
+    │   └── OBJ.jp2
+    ├── second_child
+    │   ├── MODS.xml
+    │   └── OBJ.jp2
+    └── MODS.xml
+```
 
 #### Step 2: Generating structure files
 
